@@ -12,6 +12,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 from screeninfo import get_monitors
 import openpyxl
 from openpyxl import Workbook
@@ -173,14 +174,49 @@ class ArbolApp():
 			sheet = book.active
 			talleres = sheet['A2':len(sheet['A'])]
 
+			T = 1
+
 			for row in talleres:
    				for cell in row:
 					if cell.value != None:
+						
+						salir = False
+						
+						print "Taller: "
 						print cell.value 
-						print ' A ' + str(cell.row)
-						buscar = 'B' + str(cell.row) 
-						print buscar
-						actividades = sheet(str(buscar):'B6')
+						print "Actividades"
+						print sheet['B{}'.format(cell.row)].value
+
+						time.sleep(1)
+						boton = self.browser.find_element_by_class_name('boton').click()
+						time.sleep(1)
+						self.browser.find_element_by_name("a[tema]").send_keys("Taller: "+ cell.value )
+						self.browser.find_element_by_name("a[tipo]").click()
+						self.browser.find_element_by_name("a[nombre]").send_keys("00/" + sheet['B{}'.format(cell.row)].value )
+						time.sleep(1)
+						select = Select(self.browser.find_element_by_name("a[id_objeto]"))
+						texto = 'T' + str(T)+'A0Bienvenida'
+						print texto
+						select.select_by_visible_text(texto)
+
+						self.browser.find_element_by_xpath("/html/body/div[@id='derecha']/div[@id='body']/form[1]/input[4]").click()
+						
+						T = T+1
+
+
+						for row2 in sheet['C{}:C{}'.format(cell.row+1, cell.row + 30)]:
+							for cell2 in row2:
+								act = sheet['B{}'.format(cell2.row)]
+								print act.value
+								print cell2.value
+								if( cell2.value == None):
+									salir = True
+									break
+									#print "me viro"
+							if(salir == True):
+								break
+
+						print "siguiente actividad: "
 
 			
 
