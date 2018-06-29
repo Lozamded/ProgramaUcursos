@@ -1,4 +1,9 @@
-# main.py
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+
+import unicodedata
+import codecs
+
 from appJar import gui
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -8,6 +13,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from screeninfo import get_monitors
+import openpyxl
+from openpyxl import Workbook
 import time, random, os
 from pdb import set_trace as bp
 
@@ -141,10 +148,45 @@ class ArbolApp():
 
 	def __init__(self, browser):
 		self.browser = browser
-		
+
+	def SubmitXLSX(self,btnName):
+		print ("Subir XLSX")
+		dirExcell = self.app.openBox(title="Buscar XLSX...", dirName="C:User/desktop",asFile = False)
+		print(dirExcell)
+		self.app.setLabel("XLSX", dirExcell)
+
+		book = openpyxl.load_workbook(dirExcell)
+		sheet = book.active
+
+		print(sheet['A1'].value)
+		print(sheet['A2'].value)
+
+	def SubmitHTML(self, btnName):
+		self.app.setLabel("HTMLwebpage", self.browser.current_url)
+		self.browser.get(self.browser.current_url)
+
+	def StartArbol(self, btnName):
+		if self.app.getLabel('HTMLwebpage') != "" and self.app.getLabel("XLSX") != "":
+			Excell = self.app.getLabel("XLSX")
+
+			book = openpyxl.load_workbook(Excell)
+			sheet = book.active
+			talleres = sheet['A2':len(sheet['A'])]
+
+			for row in talleres:
+   				for cell in row:
+					if cell.value != None:
+						print cell.value 
+						print ' A ' + str(cell.row)
+						buscar = 'B' + str(cell.row) 
+						print buscar
+						actividades = sheet(str(buscar):'B6')
+
+			
+
+
 	def Prepare4(self,app):  #Interfaz de subida
 		# Form GUI
-		print("Algo")
 		app.setBg('#B8B3A4')
 		app.setResizable(canResize=False)
 		m = get_monitors()
@@ -155,6 +197,35 @@ class ArbolApp():
 		##app.setIcon('ind.ico')
 		app.addImage("title", 'ucursos3.gif', 0, 0, 2)
 		app.zoomImage("title", -2)
+
+		#Leer el Excell con el arbol
+		app.addLabel("XLSXTag", "Archivo Exell", 1, 0)
+		app.setLabelAlign("XLSXTag", "left")
+		app.addLabel("XLSX", "", 1, 1)
+		app.setLabelAlign("XLSX", "left")
+		app.setLabelWidth("XLSX", 40)
+		app.setLabelBg('XLSX', 'white')
+		# llama la funcion para subir el html
+		app.addNamedButton("Abrir archivo Excell", 'SaveXLSX', self.SubmitXLSX, 1, 2)
+		app.setButtonSticky('SaveXLSX', 'right')
+
+		# HTML site
+		app.addLabel("HTMLwebpageTag", "Pagina de HTML", 2, 0)
+		app.setLabelAlign("HTMLwebpageTag", "left")
+		app.addLabel("HTMLwebpage", "", 2, 1)
+		app.setLabelAlign("HTMLwebpage", "left")
+		app.setLabelWidth("HTMLwebpage", 40)
+		app.setLabelBg('HTMLwebpage', 'white')
+		# llama la funcion para subir el html
+		app.addNamedButton("Guardar HTML", 'SaveHTML', self.SubmitHTML, 2, 2)
+		app.setButtonSticky('SaveHTML', 'right')
+
+		#Recorrer Excell
+		app.addNamedButton("Recorrer", 'StartArbol', self.StartArbol, 3, 2)
+		app.setButtonSticky('StartArbol', 'right')
+
+
+
 
 		return app
 
@@ -167,7 +238,7 @@ class ArbolApp():
 	
 
 class loginApp():	
-    # Build the GUI
+    # Build the GUIs
     def Prepare(self,app):
 		# Form GUI
 		app.setBg('#B8B3A4')
