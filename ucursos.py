@@ -216,8 +216,10 @@ class ArbolApp():
 								if( cell2.value == None ):
 									salir = True
 									
-									if(num < 9):
+									if(num < 10):
 										numtext = '0' + str(num)
+									else:
+										numtext = str(num)
 
 									time.sleep(1)
 									boton = self.browser.find_element_by_class_name('boton').click()
@@ -240,21 +242,32 @@ class ArbolApp():
 
 
 								else:
-									for Af in range(1,int(cell2.value)):
-										if(Af < 9):
+									for Af in range(1,int(cell2.value)+1):
+										if(Af < 10):
 											print Af
 											Aftext = '0' + str(Af)
-										if(num < 9):
+										else:
+											Aftext = str(Af)
+
+										if(num < 10):
 											numtext = '0' + str(num)
+										else:
+											numtext = str(num)
+
 
 										time.sleep(1)
 										boton = self.browser.find_element_by_class_name('boton').click()
 										time.sleep(1)
 
+										if(int(cell2.value) > 1):
+											numact = str(Af)
+										else:
+											numact = ""
+
 										self.browser.find_element_by_name("a[tema]").send_keys("Taller: " + cell.value)
 
 										self.browser.find_element_by_name("a[tipo]").click()
-										self.browser.find_element_by_name("a[nombre]").send_keys( numtext + " / " + sheet['B{}'.format(cell2.row)].value )
+										self.browser.find_element_by_name("a[nombre]").send_keys( numtext + " / " + sheet['B{}'.format(cell2.row)].value +" "+ numact )
 										num += 1
 										time.sleep(1)
 										select = Select(self.browser.find_element_by_name("a[id_objeto]"))
