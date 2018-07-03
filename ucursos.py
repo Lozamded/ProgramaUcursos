@@ -201,7 +201,7 @@ class ArbolApp():
 
 						self.browser.find_element_by_xpath("/html/body/div[@id='derecha']/div[@id='body']/form[1]/input[4]").click()
 						
-						
+						num = 1
 
 
 						for row2 in sheet['C{}:C{}'.format(cell.row+1, cell.row + 30)]:
@@ -211,48 +211,58 @@ class ArbolApp():
 								act = sheet['B{}'.format(cell2.row)]
 								print act.value
 								print "Numero de paginas "
-								print int(cell2.value)
+								print cell2.value
 
-								if( cell2.value == None):
+								if( cell2.value == None ):
 									salir = True
-									break
-									print "me viro"
-
+									
+									if(num < 9):
+										numtext = '0' + str(num)
 
 									time.sleep(1)
 									boton = self.browser.find_element_by_class_name('boton').click()
 									time.sleep(1)
 									self.browser.find_element_by_name("a[tema]").send_keys("Taller: " + cell.value)
-
 									self.browser.find_element_by_name("a[tipo]").click()
-									self.browser.find_element_by_name("a[nombre]").send_keys( Aftext + " / " + sheet['B{}'.format(cell2.row)].value )
+									self.browser.find_element_by_name("a[nombre]").send_keys( numtext + " / " + sheet['B{}'.format(cell2.row)].value )
+									num += 1
 									time.sleep(1)
 									select = Select(self.browser.find_element_by_name("a[id_objeto]"))
-									texto = 'T'+str(T)+'A'+str(Ai)+Aftext
+									texto = 'T'+str(T)+"Sumaysigue"
 									print texto
 									select.select_by_visible_text(texto)
+									self.browser.find_element_by_xpath("/html/body/div[@id='derecha']/div[@id='body']/form[1]/input[4]").click()
+
+
+									print "me viro"
+									break
+
 
 
 								else:
-									for Af in range(1,int(cell2.value)-1):
+									for Af in range(1,int(cell2.value)):
 										if(Af < 9):
 											print Af
 											Aftext = '0' + str(Af)
-											time.sleep(1)
-											boton = self.browser.find_element_by_class_name('boton').click()
-											time.sleep(1)
+										if(num < 9):
+											numtext = '0' + str(num)
 
-											self.browser.find_element_by_name("a[tema]").send_keys("Taller: " + cell.value)
+										time.sleep(1)
+										boton = self.browser.find_element_by_class_name('boton').click()
+										time.sleep(1)
 
-											self.browser.find_element_by_name("a[tipo]").click()
-											self.browser.find_element_by_name("a[nombre]").send_keys( Aftext + " / " + sheet['B{}'.format(cell2.row)].value )
-											time.sleep(1)
-											select = Select(self.browser.find_element_by_name("a[id_objeto]"))
-											texto = 'T'+str(T)+'A'+str(Ai)+Aftext
-											print texto
-											select.select_by_visible_text(texto)
+										self.browser.find_element_by_name("a[tema]").send_keys("Taller: " + cell.value)
 
-											self.browser.find_element_by_xpath("/html/body/div[@id='derecha']/div[@id='body']/form[1]/input[4]").click()
+										self.browser.find_element_by_name("a[tipo]").click()
+										self.browser.find_element_by_name("a[nombre]").send_keys( numtext + " / " + sheet['B{}'.format(cell2.row)].value )
+										num += 1
+										time.sleep(1)
+										select = Select(self.browser.find_element_by_name("a[id_objeto]"))
+										texto = 'T'+str(T)+'A'+str(Ai)+Aftext
+										print texto
+										select.select_by_visible_text(texto)
+
+										self.browser.find_element_by_xpath("/html/body/div[@id='derecha']/div[@id='body']/form[1]/input[4]").click()
 
 
 							if(salir == True):
@@ -262,6 +272,7 @@ class ArbolApp():
 
 						print "siguiente actividad: "
 
+			book.close()
 			
 
 
